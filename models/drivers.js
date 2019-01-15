@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const {CarSchema} = require('./cars')
 const DriverSchema = mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -9,7 +9,7 @@ const DriverSchema = mongoose.Schema({
     address: {type: String, required: true},
     passportId: {type: String, required: true},
     job: {type: String, required: true},
-    // carInfo
+    carInfo: [CarSchema],
     passengerRates: {
         type:[Number],
         min: 1,

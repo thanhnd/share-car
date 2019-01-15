@@ -12,6 +12,7 @@ const router = express.Router()
 // Load models
 const {User} = require('../../models/users')
 const {Driver} = require('../../models/drivers')
+const {Car} = require('../../models/cars')
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -138,23 +139,33 @@ router.post('/drivers/create-profile',
     }
 )
 
-router.get('/drivers/profile/:userId', 
+// routes: /api/users/drivers/add-car
+// desc: add new car
+// access: PRIVATE(driver)
+
+router.post('/drivers/add-car', 
     passport.authenticate('jwt', {session: false}),
     authorizing('driver'),
+    upload.single('carImage'),
     (req, res) => {
+        console.log(req.file)
         const userId = req.user.id
-        const {address, passportId, job} = req.body
-        Driver.findOne({userId: userId})
+        const {brand, model, manufacturingYear, licensePlate, numberOfSeats} = req.body
+        const carImage = req.file.path
+        
+        Driver.findOne({userId})
             .then(driver => {
-                if(driver) return res.status(400).json({error: "Profile exists"})
-                const newDriver = new Driver({
-                    userId, address, passportId, job
-                })
-                return newDriver.save()
+                if(!driver) return res.status(400).json({error: "Driver not found"})
+
+                const newCar = new Car({brand, model, manufacturingYear, licensePlate, numberOfSeats, carImage}) 
+                driver.carInfo.push(newCar)
+                return driver.save()
             })
             .then(driver => res.status(200).json(driver))
             .catch(console.log)
     }
+
 )
+
 
 module.exports = router
