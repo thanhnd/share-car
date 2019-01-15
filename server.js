@@ -17,6 +17,7 @@ require('./config/passport')(passport)
 
 // Config routes
 app.use('/api/users', require('./routes/api/users'))
+app.use('/api/trips', require('./routes/api/trips'))
 
 const port = process.env.PORT || 5000
 app.listen(port, () => {
