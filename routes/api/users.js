@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken')
 const passport = require('passport')
 const multer = require('multer')
 
+const {validateRegisterInput} = require('../../validation/register')
+
 //load middleware
 const {authorizing} = require('../../middleware/auth')
 
@@ -34,6 +36,9 @@ router.get('/test', (req, res) => {
 
 router.post('/register', (req, res) => {
     console.log(req.body)
+
+    const {errors, isValid} = validateRegisterInput(req.body)
+    if(!isValid) return res.status(400).json(errors)
 
     const {email, password, userType, fullName, phone, dateOfBirth} = req.body
 
